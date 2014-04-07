@@ -5,6 +5,8 @@ Raspberry Pi powered TwitterBot project.
 
 Polls for hashtag #furzedown and retweets any found via @FurzedownTweets
 
+https://twitter.com/furzedowntweets
+
 Exceptions are: 
 - retweets
 - contains @username
