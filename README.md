@@ -9,7 +9,7 @@ https://twitter.com/furzedowntweets
 
 Exceptions are: 
 - retweets
-- contains @username
+- starts with @username
 - status words in wordBlackList
 - status user in userBlackList
 
