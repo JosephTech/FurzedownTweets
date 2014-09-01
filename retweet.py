@@ -17,8 +17,8 @@ hashtag = config.get("settings","search_query")
 tweetLanguage = config.get("settings","tweet_language")
 
 # blacklisted users and words
-userBlacklist = ["tootinkstudio"]
-wordBlacklist = ["RT", u"♺", "cunt", "fuck"]
+userBlacklist = ["tootinkstudio","wwwfantasylondo","companieslist","babeinshorts99","PhoneSexHoneyUK","PropertyInfo_UK","HS_EstateAgents","YinGyanGgirls","xxxdenisexxx1","WellKell","tonya20011","superwilliam1","stevejobsworth1","Spazmataz1","SixOfSade","sharontweedy1","SharleneDEMTWO","Sexy_IshaPD","sassychicchar","PropertyWizzUK","OneSiobhan","MelanieSousaLDN","LauraLaurs1","krystalmeth5","JoanneSWID", "kateWinsAll"]
+wordBlacklist = ["RT", u"♺", "cunt", "fuck", "fucking","Harrison Sellars","EstateAgents"]
 
 # build savepoint path + file
 last_id_filename = "last_id_hashtag_%s" % hashtag.replace("#", "").split(" ")[0]
@@ -78,7 +78,10 @@ for status in timeline:
                 err_counter += 1
 		continue
 
-print "Finished. %d Tweets retweeted, %d errors occured." % (tw_counter, err_counter)
+
+message =  "Finished. %d Tweets retweeted, %d errors occured." % (tw_counter, err_counter)
+print(message)
+api.send_direct_message(screen_name="julesjoseph", text=message)
 
 # write last retweeted tweet id to file
 with open(last_id_file, "w") as file:

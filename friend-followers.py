@@ -5,6 +5,7 @@ import tweepy
 import os
 import ConfigParser
 import inspect
+import time
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
@@ -25,12 +26,22 @@ friend_ids = []
 follower_ids = []
 
 print "Fetching Followers..."
-for follower in tweepy.Cursor(api.followers).items():
-    follower_ids.append(follower.id)
+#for follower in tweepy.Cursor(api.followers).items():
+#    follower_ids.append(follower.id)
+for page in tweepy.Cursor(api.followers).pages():
+	follower_ids.extend(page)
+	time.sleep(60)
+#print len(follower_ids)
+
 
 print "Fetching Friends..."
-for friend in tweepy.Cursor(api.friends).items():
-    friend_ids.append(friend.id)
+#for friend in tweepy.Cursor(api.friends).items():
+#    friend_ids.append(friend.id)
+for page in tweepy.Cursor(api.friends).pages():
+	friend_ids.extend(page)
+	time.sleep(60)
+#print len(friend_ids)
+
 	
 follow_list = get_diff(follower_ids, friend_ids)
 
