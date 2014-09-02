@@ -65,13 +65,18 @@ err_counter = 0
 # iterate the timeline and retweet
 for status in timeline:
 	try:
-		print "(%(date)s) %(name)s: %(message)s\n" % \
-			{ "date" : status.created_at,
-			"name" : status.author.screen_name.encode('utf-8'),
-			"message" : status.text.encode('utf-8') }
-
-		api.retweet(status.id)
-		tw_counter += 1
+		#only allow tweets with 3 or less hashtags
+		str = status.text
+		search = "#"
+		hashTagCount = str.count(search)
+		if hashTagCount <= 3:
+			print "(%(date)s) %(name)s: %(message)s\n" % \
+				{ "date" : status.created_at,
+				"name" : status.author.screen_name.encode('utf-8'),
+				"message" : status.text.encode('utf-8') }	
+				
+			api.retweet(status.id)
+			tw_counter += 1
 	except tweepy.error.TweepError as e:
 		# just in case tweet got deleted in the meantime or already retweeted
 		print e
