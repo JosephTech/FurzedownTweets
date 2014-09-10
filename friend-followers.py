@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -5,52 +6,33 @@ import tweepy
 import os
 import ConfigParser
 import inspect
-import time
-
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 # read config
-config = ConfigParser.SafeConfigParser()
-config.read(os.path.join(path, "config"))
+config = ConfigParser.ConfigParser()
+config.read("/home/pi/jules/retweet/furzedown/config")
+
+
+# build savepoint path + file
+lastuser = config.get("twitter","lastuser")
+print lastuser
 
 # create bot
 auth = tweepy.OAuthHandler(config.get("twitter","consumer_key"), config.get("twitter","consumer_secret"))
 auth.set_access_token(config.get("twitter","access_token"), config.get("twitter","access_token_secret"))
 api = tweepy.API(auth)
+followers = []
 
-def get_diff(list1,list2):
-    """Outputs objects which are in list1 but not list 2"""
-    return list(set(list1).difference(set(list2)))
+for follower in tweepy.Cursor(api.followers).items(25):
+	followers.append(follower)
 
-friend_ids = []
-follower_ids = []
+followers.reverse()
+found = False
 
-print "Fetching Followers..."
-#for follower in tweepy.Cursor(api.followers).items():
-#    follower_ids.append(follower.id)
-for page in tweepy.Cursor(api.followers).pages():
-	follower_ids.extend(page)
-	time.sleep(60)
-#print len(follower_ids)
+for f in followers:
+	if found:
+		print "New Friend!"
+		print f.screen_name
+		api.create_friendship(screen_name)
+	if f.screen_name == lastuser:
+		found = True
 
-
-print "Fetching Friends..."
-#for friend in tweepy.Cursor(api.friends).items():
-#    friend_ids.append(friend.id)
-for page in tweepy.Cursor(api.friends).pages():
-	friend_ids.extend(page)
-	time.sleep(60)
-#print len(friend_ids)
-
-	
-follow_list = get_diff(follower_ids, friend_ids)
-
-print "about to FOLLOW %s people." % len(follow_list)
-
-for user in follow_list:
-    try:
-        api.create_friendship(user)
-    except:
-        print "error on user: %s" % api.get_user(user).screen_name
-    
-print "Done\n\n"

@@ -10,7 +10,7 @@ import inspect
 
 # read config
 config = ConfigParser.ConfigParser()
-config.read("config")
+config.read("/home/pi/jules/retweet/furzedown/config")
 
 # your hashtag or search query and tweet language (empty = all languages)
 hashtag = config.get("settings","search_query")
