@@ -21,7 +21,7 @@ userBlacklist = ["tootinkstudio","wwwfantasylondo","companieslist","babeinshorts
 wordBlacklist = ["RT", u"♺", "cunt", "fuck", "fucking","Harrison Sellars","EstateAgents"]
 
 # build savepoint path + file
-last_id_filename = "last_id_hashtag_%s" % hashtag.replace("#", "").split(" ")[0]
+last_id_filename = "last_id_hashtag_furzedown"
 rt_bot_path = os.path.dirname(os.path.abspath(__file__))
 last_id_file = os.path.join(rt_bot_path, last_id_filename)
 
