@@ -25,14 +25,24 @@ followers = []
 for follower in tweepy.Cursor(api.followers).items(25):
 	followers.append(follower)
 
+latestUser = followers[0].screen_name
 followers.reverse()
 found = False
 
+new_friends = 0
 for f in followers:
 	if found:
 		print "New Friend!"
 		print f.screen_name
-		api.create_friendship(screen_name)
+		new_friends += 1
+		api.create_friendship(f.screen_name)
 	if f.screen_name == lastuser:
 		found = True
 
+
+message = "Followed back %d friends" % (new_friends)
+api.send_direct_message(screen_name="julesjoseph", text=message)
+
+config.set("twitter","lastuser",latestUser)
+with open("config","wb") as configfile:
+	config.write(configfile)

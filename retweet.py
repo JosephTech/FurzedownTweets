@@ -6,11 +6,10 @@ import os
 import ConfigParser
 import inspect
 
-#path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-
 # read config
-config = ConfigParser.ConfigParser()
-config.read("/home/pi/jules/retweet/furzedown/config")
+config = ConfigParser.RawConfigParser()
+config.read("/home/pi/jules/retweet/furzedown/config.ini")
+
 
 # your hashtag or search query and tweet language (empty = all languages)
 hashtag = config.get("settings","search_query")
@@ -21,30 +20,24 @@ userBlacklist = ["companieslist","tootinkstudio","wwwfantasylondo","companieslis
 wordBlacklist = ["RT", u"♺", "cunt", "fuck", "fucking","Harrison Sellars","EstateAgents"]
 
 # build savepoint path + file
-lastid = long(config.get("twitter","lastid"))
-#print lastid
-#last_id_filename = "last_id_hashtag_furzedown"
-#rt_bot_path = os.path.dirname(os.path.abspath(__file__))
-#last_id_file = os.path.join(rt_bot_path, last_id_filename)
+#lastid = long(config.get("twitter","lastid"))
 
-
+last_id_file = "/home/pi/jules/retweet/furzedown/last_tweet_id.txt"
 
 # create bot
-#print "create bot"
 auth = tweepy.OAuthHandler(config.get("twitter","consumer_key"), config.get("twitter","consumer_secret"))
 auth.set_access_token(config.get("twitter","access_token"), config.get("twitter","access_token_secret"))
 api = tweepy.API(auth)
 
-# retrieve last savepoint if available
-#try:
-#	with open(last_id_file, "r") as file:
-#		savepoint = file.read()
-#except IOError:
-#	savepoint = ""
-#	print "No savepoint found. Trying to get as many results as possible."
+
+try:
+	with open(last_id_file, "r") as file:
+		lastid=file.read()
+except IOError:
+	lastid = ""
+	print "problem retrieving last tweet id from file"
 
 # search query
-#print "timelineiterator"
 timelineIterator = tweepy.Cursor(api.search, q=hashtag, since_id=lastid, lang=tweetLanguage).items()
 
 # put everything into a list to be able to sort/filter
@@ -52,15 +45,16 @@ timeline = []
 for status in timelineIterator:
 	timeline.append(status)
 
+try:
+	last_tweet_id = str(timeline[0].id)
+except IndexError:
+	last_tweet_id=lastid
+
 print "Found %d tweets" % (len(timeline))
 
-try:
-    last_tweet_id = long(timeline[0].id)	
-except IndexError:
-    last_tweet_id = lastid
 
-#print type(timeline[0].id)
-
+print "last_tweet_id"
+print last_tweet_id
 # filter @replies/blacklisted words & users out and reverse timeline
 timeline = filter(lambda status: status.text[0] != "@", timeline)
 timeline = filter(lambda status: not any(word in status.text.split() for word in wordBlacklist), timeline)
@@ -96,16 +90,8 @@ message =  "Finished. %d Tweets retweeted, %d errors occured." % (tw_counter, er
 print(message)
 api.send_direct_message(screen_name="julesjoseph", text=message)
 
-# write last retweeted tweet id to file
-#print str(last_tweet_id)
-#with open(last_id_file, "w") as file:
-#	file.write(str(last_tweet_id))
-#print type(last_tweet_id)
-#print str(last_tweet_id)
+with open(last_id_file, "w") as file:
+	file.write(last_tweet_id)
 
-#configTweetId = str(last_tweet_id)
-#print configTweetId
-config.set("twitter","lastid",last_tweet_id)
-with open("config", "wb") as configfile:
-	config.write(configfile)
+
 
